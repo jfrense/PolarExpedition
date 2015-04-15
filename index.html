@@ -14,6 +14,18 @@
 
 </style>
 <body>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+
+
+
+<div id="search_section" class="control">
+        <form id="search_form" action="">
+          <p class="search_title">Search <input type="text" class="text-input" id="search" value="" /></p>
+        </form>
+      </div>
+
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script>
 
@@ -71,17 +83,46 @@ d3.json("data.json", function(error, graph) {
             return 1;
         });
 
+
+/*
+        var path = svg.append("g").selectAll(".link")
+            .data(edges)
+          .enter().append("path")
+            .attr("id",function(d,i) { return "linkId_" + i; })
+*/
+
+/*
+        var labelText = svg.selectAll(".labelText")
+            .data(edges)
+          .enter().append("text")
+            .attr("class","labelText")
+            .attr("dx",20)
+            .attr("dy",0)
+            .style("fill","red")
+          .append("textPath")
+            .attr("xlink:href",function(d,i) { return "#linkId_" + i;})
+            .text(function(d) { return d.label;});
+*/
+
+
+
+
+/*
     var linkText = svg.selectAll(".link")
         .append("text")
         .attr("class", "link-label")
        .attr("font-family", "Arial, Helvetica, sans-serif")
         .attr("fill", "Black")
-        .style("font", "normal 8px Arial")
+        .style("font", "normal 12px Arial")
         .attr("dy", ".35em")
         .attr("text-anchor", "middle")
         .text(function(d) {
             return d.label;
         });
+*/
+
+
+
 
 
 
@@ -93,6 +134,40 @@ d3.json("data.json", function(error, graph) {
       .style("fill", function(d) {if (died.indexOf(d.id) > -1){
                                   return "red";}
                                   else return "blue";})
+function searchData(searchTerm) {
+  var searchRegEx;
+  searchRegEx = new RegExp(searchTerm.toLowerCase());
+
+    node.each(function(e){
+      var element;
+      var match;
+      element = d3.select(this);
+      match = e.label.toLowerCase().search(searchRegEx);
+      if(searchTerm.length > 0 && match >= 0){
+  //      svg.attr("transform", "translate(" + e.x + "," + e.y + ")");
+      link.style('stroke', function(d){
+        if(e.id === d.source.id || e.id === d.target.id){
+          return "red";
+
+        }
+
+      });
+
+    }
+
+
+
+    });
+}
+
+$("#search").keyup(function() {
+  var searchTerm;
+  searchTerm = $(this).val();
+  console.log(searchTerm);
+  return searchData(searchTerm);
+});
+
+
   //    .call(force.drag);
 
   node.append("title")
@@ -105,7 +180,7 @@ d3.json("data.json", function(error, graph) {
         .attr("y1", function(d) { return d.source.y; })
         .attr("x2", function(d) { return d.target.x; })
         .attr("y2", function(d) { return d.target.y; });
-
+/*
     linkText
         .attr("x", function(d) {
             return ((d.source.x + d.target.x)/2);
@@ -113,7 +188,7 @@ d3.json("data.json", function(error, graph) {
         .attr("y", function(d) {
             return ((d.source.y + d.target.y)/2);
         });
-
+*/
 
 
 
@@ -124,5 +199,7 @@ d3.json("data.json", function(error, graph) {
 
   });
 });
+
+
 
 </script>
