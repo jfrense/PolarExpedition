@@ -12,20 +12,27 @@
   stroke-opacity: .6;
 }
 
+.ui-menu{
+
+    border-radius: 1px;
+    border: 1px solid #454545;
+    position: relative;
+    
+}
+
 </style>
 <body>
 
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
 
 
-
-<div id="search_section" class="control">
-        <form id="search_form" action="">
-          <p class="search_title">Search <input type="text" class="text-input" id="search" value="" /></p>
+<div >
+        <form id="searchForm" method="post" >
+          <p >Search <input type="text" id="search" action="search" /></p>
         </form>
       </div>
-
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script>
 
@@ -55,6 +62,14 @@ var svg = d3.select("body").append("svg")
 d3.json("data.json", function(error, graph) {
   var edges = [];
   var died = [];
+  var nodesId = [];
+
+//pre-process autocomplete form
+  graph.nodes.forEach(function(e){
+    nodesId.push(e.label);
+  });
+
+
   graph.links.forEach(function(e){
     var sourceNode = graph.nodes.filter(function(n){ return n.id === e.source;})[0],
     targetNode = graph.nodes.filter(function(n){return n.id === e.target;})[0];
@@ -136,18 +151,19 @@ d3.json("data.json", function(error, graph) {
                                   else return "blue";})
 function searchData(searchTerm) {
   var searchRegEx;
-  searchRegEx = new RegExp(searchTerm.toLowerCase());
-
+  searchRegEx = new RegExp(searchTerm.toLowerCase(),"g");
+  console.log(searchTerm.toLowerCase());
     node.each(function(e){
       var element;
       var match;
       element = d3.select(this);
       match = e.label.toLowerCase().search(searchRegEx);
-      if(searchTerm.length > 0 && match >= 0){
+      if(searchTerm.toLowerCase() === e.label.toLowerCase()){
   //      svg.attr("transform", "translate(" + e.x + "," + e.y + ")");
+        console.log("yes");
       link.style('stroke', function(d){
         if(e.id === d.source.id || e.id === d.target.id){
-          return "red";
+          return "green";
 
         }
 
@@ -160,11 +176,25 @@ function searchData(searchTerm) {
     });
 }
 
-$("#search").keyup(function() {
+  $("#search").autocomplete({
+      source: nodesId,
+      messages: {
+        noResults: '',
+        results: function() {}
+    }
+     });
+
+
+
+$("#search").keypress(function(e) {
   var searchTerm;
+  if(e.which == 13){
+    e.preventDefault();
   searchTerm = $(this).val();
-  console.log(searchTerm);
-  return searchData(searchTerm);
+   searchData(searchTerm);
+  // e.preventDefault();
+
+}
 });
 
 
