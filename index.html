@@ -17,7 +17,7 @@
     border-radius: 1px;
     border: 1px solid #454545;
     position: relative;
-    
+
 }
 
 </style>
@@ -59,7 +59,7 @@ var svg = d3.select("body").append("svg")
         }
 
 
-d3.json("data.json", function(error, graph) {
+d3.json("NewData.json", function(error, graph) {
   var edges = [];
   var died = [];
   var nodesId = [];
@@ -76,9 +76,9 @@ d3.json("data.json", function(error, graph) {
 
     edges.push({source: sourceNode, target: targetNode, diedonexpedition: e.diedonexpedition, label: e.label});
 
-    if(e.diedonexpedition == "Y"){
-      died.push(e.source);
-    }
+//    if(e.diedonexpedition == "Y"){
+//      died.push(e.source);
+//    }
 
   });
 
@@ -96,7 +96,10 @@ d3.json("data.json", function(error, graph) {
         .attr("class", "link-line")
         .style("stroke-width", function (d) {
             return 1;
-        });
+        })
+        .style("stroke", function(d) {if (d.diedonexpedition == "Y"){
+                                    return "red";}
+                                    else return "blue";});
 
 
 /*
@@ -146,21 +149,20 @@ d3.json("data.json", function(error, graph) {
     .enter().append("circle")
       .attr("class", "node")
       .attr("r", 3)
-      .style("fill", function(d) {if (died.indexOf(d.id) > -1){
-                                  return "red";}
-                                  else return "blue";})
+      .style("fill", "blue");
+
 function searchData(searchTerm) {
   var searchRegEx;
   searchRegEx = new RegExp(searchTerm.toLowerCase(),"g");
-  console.log(searchTerm.toLowerCase());
     node.each(function(e){
       var element;
       var match;
       element = d3.select(this);
       match = e.label.toLowerCase().search(searchRegEx);
       if(searchTerm.toLowerCase() === e.label.toLowerCase()){
-  //      svg.attr("transform", "translate(" + e.x + "," + e.y + ")");
-        console.log("yes");
+// trying to center highlighted node, however the transition is very clunky
+       // svg.attr("transform", "translate(" + e.x + "," + e.y + ")");
+
       link.style('stroke', function(d){
         if(e.id === d.source.id || e.id === d.target.id){
           return "green";
@@ -192,7 +194,6 @@ $("#search").keypress(function(e) {
     e.preventDefault();
   searchTerm = $(this).val();
    searchData(searchTerm);
-  // e.preventDefault();
 
 }
 });
@@ -210,6 +211,9 @@ $("#search").keypress(function(e) {
         .attr("y1", function(d) { return d.source.y; })
         .attr("x2", function(d) { return d.target.x; })
         .attr("y2", function(d) { return d.target.y; });
+
+// displays text of edges (Label)
+// the view is very messy
 /*
     linkText
         .attr("x", function(d) {
