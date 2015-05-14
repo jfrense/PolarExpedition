@@ -33,6 +33,7 @@
           <p >Search <input type="text" id="search" action="search" /></p>
         </form>
       </div>
+<button style =>Reset</button> <button id="eigen">Eigenvector Centrality </button>
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script>
 
@@ -148,7 +149,9 @@ d3.json("NewData.json", function(error, graph) {
       .data(graph.nodes)
     .enter().append("circle")
       .attr("class", "node")
-      .attr("r", 3)
+      .attr("r", function(d){
+        return 3
+      })
       .style("fill", "blue");
 
 function searchData(searchTerm) {
@@ -198,6 +201,27 @@ $("#search").keypress(function(e) {
 }
 });
 
+$("button").click(function(event) {
+
+link.style("stroke", function(d) {if (d.diedonexpedition == "Y"){
+                                    return "red";}
+                                    else return "blue";});
+
+
+});
+
+$("#eigen").toggle(function() {
+
+node.attr("r", function(d){
+        return 100 * d.eigenvectorcentrality
+      });
+}, function(){
+node.attr("r", function(d){
+        return 3
+});
+
+
+});
 
   //    .call(force.drag);
 
